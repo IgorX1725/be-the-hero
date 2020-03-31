@@ -25,14 +25,17 @@ module.exports ={
         const {id} = req.params
         const ong_id = req.headers.authorization
 
-        const incident = await connection('incidents').where('id',id).select('ong_id').first()
+        const incident = await connection('incidents').where('id',id).first()
+        
+        if(incident == undefined){
+            return res.status(401).json({error: 'incident not found'})
+        }
 
         if(incident.ong_id != ong_id){
             return res.status(401).json({error: 'Operation not permitted'})
         }
 
         await connection('incidents').where('id',id).delete();
-
         return res.status(204).send();
     }
     ,
